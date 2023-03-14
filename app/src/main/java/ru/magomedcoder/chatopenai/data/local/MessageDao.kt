@@ -10,4 +10,7 @@ interface MessageDao : BaseDao<Message> {
     @Query("SELECT * FROM message")
     suspend fun fetchAll(): List<Message>
 
+    @Query("Delete FROM message")
+    suspend fun deleteAll()
+
 }

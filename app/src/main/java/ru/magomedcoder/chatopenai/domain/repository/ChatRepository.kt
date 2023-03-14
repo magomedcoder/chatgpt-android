@@ -12,4 +12,6 @@ interface ChatRepository {
 
     suspend fun getAllMessage(): Result<List<Message>>
 
+    suspend fun clear(): Result<Unit>
+
 }

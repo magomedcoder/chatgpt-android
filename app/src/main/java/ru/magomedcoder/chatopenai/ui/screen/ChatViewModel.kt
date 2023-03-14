@@ -103,4 +103,12 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
         return newMessage
     }
 
+    fun clear() {
+        viewModelScope.launch {
+            _chatRepository.clear().onSuccess {
+                getAllMessage()
+            }.onFailure {}
+        }
+    }
+
 }

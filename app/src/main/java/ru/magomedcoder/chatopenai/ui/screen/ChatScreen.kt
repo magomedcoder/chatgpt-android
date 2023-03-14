@@ -60,7 +60,9 @@ fun MainScreen(viewModel: ChatViewModel) {
                 modifier = Modifier
                     .clickable(interactionSource = MutableInteractionSource(),
                         indication = null,
-                        onClick = {})
+                        onClick = {
+                            viewModel.clear()
+                        })
                     .padding(10.dp)
             )
         }
@@ -98,7 +100,7 @@ fun MainScreen(viewModel: ChatViewModel) {
                                             .padding(5.dp)
                                             .fillMaxWidth()
                                             .wrapContentWidth(Alignment.CenterHorizontally),
-                                        color = Color.Red,
+                                        color = Color.White,
                                         textAlign = TextAlign.Center,
                                         fontSize = 12.sp
                                     )

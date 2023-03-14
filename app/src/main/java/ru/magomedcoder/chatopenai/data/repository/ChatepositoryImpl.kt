@@ -60,4 +60,11 @@ class ChatRepositoryImpl(
         }
     }
 
+
+    override suspend fun clear(): Result<Unit> {
+        return handleException {
+            _chatDao.deleteAll()
+        }
+    }
+
 }
