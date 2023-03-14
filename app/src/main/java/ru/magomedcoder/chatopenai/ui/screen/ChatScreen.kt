@@ -5,18 +5,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import org.koin.androidx.compose.get
@@ -24,11 +31,13 @@ import ru.magomedcoder.chatopenai.R
 import ru.magomedcoder.chatopenai.ui.components.ChatTextField
 import ru.magomedcoder.chatopenai.ui.components.RightView
 import ru.magomedcoder.chatopenai.ui.theme.Purple80
+import ru.magomedcoder.chatopenai.utils.enums.Role
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: ChatViewModel) {
 
+    val list by viewModel.localList.observeAsState(emptyList())
     var text by remember { mutableStateOf(TextFieldValue("")) }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -42,7 +51,8 @@ fun MainScreen() {
             }
             .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = stringResource(id = R.string.app_name), modifier = Modifier.padding(10.dp))
             Icon(
                 imageVector = Icons.Filled.Delete,
@@ -66,8 +76,48 @@ fun MainScreen() {
                 width = Dimension.fillToConstraints
             }
             .background(Purple80)) {
-                LeftView("Привет")
-                RightView("Привет")
+            val scrollState = rememberLazyListState()
+            LazyColumn(state = scrollState) {
+                items(list.size) { position ->
+                    Spacer(modifier = Modifier.height(10.dp))
+                    val message = list[position]
+                    when (message.role) {
+                        Role.ASSISTANT.roleName -> {
+                            LeftView(message.content)
+                        }
+                        Role.USER.roleName -> {
+                            RightView(message.content)
+                        }
+                        Role.SYSTEAM.roleName -> {
+                            Box(
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                SelectionContainer {
+                                    Text(
+                                        text = message.content,
+                                        modifier = Modifier
+                                            .padding(5.dp)
+                                            .fillMaxWidth()
+                                            .wrapContentWidth(Alignment.CenterHorizontally),
+                                        color = Color.Red,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if (position == list.size - 1) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+            }
+            if (list.isNotEmpty()) {
+                LaunchedEffect(key1 = list) {
+                    scrollState.animateScrollToItem(list.size - 1)
+                }
+            }
         }
         val keyboardController = LocalSoftwareKeyboardController.current
         ConstraintLayout(modifier = Modifier.constrainAs(bottomR) {
@@ -77,7 +127,8 @@ fun MainScreen() {
             end.linkTo(parent.end)
         }) {
             val (textR, sendR) = createRefs()
-            ChatTextField(value = text,
+            ChatTextField(
+                value = text,
                 onValueChange = { text = it },
                 modifier = Modifier
                     .constrainAs(textR) {
@@ -89,7 +140,8 @@ fun MainScreen() {
                 onClick = {
                     keyboardController?.hide()
                     text = TextFieldValue("")
-                })
+                }
+            )
         }
     }
 }

@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -21,6 +23,8 @@ android {
 
         // Api key
         buildConfigField("String", "BASE_API_URL", "\"https://api.openai.com/\"")
+        buildConfigField("String", "OPEN_AI_KEY", "\"key\"")
+        buildConfigField("String", "CHAT_MODEL", "\"key\"")
     }
 
     buildTypes {
@@ -75,4 +79,15 @@ dependencies {
     implementation "androidx.compose.animation:animation:$compose_ui_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.blankj:utilcodex:1.31.0'
+    implementation 'com.orhanobut:logger:2.2.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 }
