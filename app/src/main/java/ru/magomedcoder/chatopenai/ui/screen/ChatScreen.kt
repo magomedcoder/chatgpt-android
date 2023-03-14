@@ -58,11 +58,9 @@ fun MainScreen(viewModel: ChatViewModel) {
                 imageVector = Icons.Filled.Delete,
                 contentDescription = "",
                 modifier = Modifier
-                    .clickable(
-                        interactionSource = MutableInteractionSource(),
+                    .clickable(interactionSource = MutableInteractionSource(),
                         indication = null,
-                        onClick = {}
-                    )
+                        onClick = {})
                     .padding(10.dp)
             )
         }
@@ -139,6 +137,7 @@ fun MainScreen(viewModel: ChatViewModel) {
                     .padding(5.dp),
                 onClick = {
                     keyboardController?.hide()
+                    viewModel.sendContent(text.text)
                     text = TextFieldValue("")
                 }
             )

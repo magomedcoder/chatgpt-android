@@ -14,4 +14,8 @@ data class Message(
     val responseTime: Long = 1,
     val insertTime: Long = System.currentTimeMillis(),
     var status: Int = MessageStatus.UNFINISHED.status
-)
+) {
+    fun toDTO(): MessageDTO {
+        return MessageDTO(role = role, content = content)
+    }
+}

@@ -8,4 +8,8 @@ interface ChatRepository {
 
     suspend fun fetchMessage(messageList: List<MessageDTO>): Result<ChatResponse>
 
+    fun insertMessage(message: Message): Result<Long>
+
+    suspend fun getAllMessage(): Result<List<Message>>
+
 }
