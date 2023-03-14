@@ -16,6 +16,9 @@ class HttpClient {
         OkHttpClient.Builder()
             .connectTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
+            .addInterceptor(HeaderInterceptor())
+            .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(ErrorInterceptor())
             .build()
     }
 
