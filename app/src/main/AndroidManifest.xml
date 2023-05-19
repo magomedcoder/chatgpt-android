@@ -5,20 +5,20 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="ru.magomedcoder.chatopenai.App"
+        android:name="ru.magomedcoder.chatgpt.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ChatOpenAI"
+        android:theme="@style/Theme.ChatGPT"
         tools:targetApi="31">
         <activity
-            android:name="ru.magomedcoder.chatopenai.ui.MainActivity"
+            android:name="ru.magomedcoder.chatgpt.ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ChatOpenAI">
+            android:theme="@style/Theme.ChatGPT">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
