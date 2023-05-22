@@ -32,6 +32,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.get
 import ru.magomedcoder.chatgpt.R
+import ru.magomedcoder.chatgpt.ui.components.EmptyDialog
+import ru.magomedcoder.chatgpt.ui.components.EmptyMessage
 import ru.magomedcoder.chatgpt.ui.theme.Purple40
 
 @Composable
@@ -75,41 +77,45 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel) {
             }
             .padding(top = 5.dp, bottom = 5.dp)
         ) {
-            val scrollState = rememberLazyListState()
-            LazyColumn(state = scrollState) {
-                items(list.size) { position ->
-                    val dialog = list[position]
-                    val title = if (dialog.title.isNullOrEmpty()) {
-                        "Чат №" + (dialog.id)
-                    } else {
-                        dialog.title
-                    }
-                    Row(
-                        modifier = Modifier
-                            .padding(bottom = 5.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Card(
+            if (list.isNotEmpty()) {
+                val scrollState = rememberLazyListState()
+                LazyColumn(state = scrollState) {
+                    items(list.size) { position ->
+                        val dialog = list[position]
+                        val title = if (dialog.title.isNullOrEmpty()) {
+                            "Чат №" + (dialog.id)
+                        } else {
+                            dialog.title
+                        }
+                        Row(
                             modifier = Modifier
+                                .padding(bottom = 5.dp)
                                 .fillMaxWidth()
-                                .clickable(interactionSource = MutableInteractionSource(),
-                                    indication = null,
-                                    onClick = {
-                                        navController.navigate("chat?id=" + dialog.id)
-                                    }),
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0xFF2C2C2C)
-                            ),
-                            shape = RoundedCornerShape(0.dp)
                         ) {
-                            Text(
-                                text = title,
-                                color = Color.White,
-                                modifier = Modifier.padding(10.dp)
-                            )
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(interactionSource = MutableInteractionSource(),
+                                        indication = null,
+                                        onClick = {
+                                            navController.navigate("chat?id=" + dialog.id)
+                                        }),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xFF2C2C2C)
+                                ),
+                                shape = RoundedCornerShape(0.dp)
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            }
                         }
                     }
                 }
+            } else {
+                EmptyDialog()
             }
         }
     }

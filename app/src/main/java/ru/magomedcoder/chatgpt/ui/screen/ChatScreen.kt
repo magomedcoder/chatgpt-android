@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.get
 import ru.magomedcoder.chatgpt.ui.components.ChatTextField
+import ru.magomedcoder.chatgpt.ui.components.EmptyMessage
 import ru.magomedcoder.chatgpt.ui.components.LeftView
 import ru.magomedcoder.chatgpt.ui.components.RightView
 import ru.magomedcoder.chatgpt.ui.theme.Purple80
@@ -88,49 +89,53 @@ fun ChatScreen(navController: NavHostController, dialogId: Int, viewModel: ChatV
                 width = Dimension.fillToConstraints
             }
             .background(Purple80)) {
-            val scrollState = rememberLazyListState()
-            LazyColumn(state = scrollState) {
-                items(list.size) { position ->
-                    Spacer(modifier = Modifier.height(10.dp))
-                    val message = list[position]
-                    when (message.role) {
-                        Role.ASSISTANT.roleName -> {
-                            LeftView(message.content)
-                        }
+            if (list.isNotEmpty()) {
+                val scrollState = rememberLazyListState()
+                LazyColumn(state = scrollState) {
+                    items(list.size) { position ->
+                        Spacer(modifier = Modifier.height(10.dp))
+                        val message = list[position]
+                        when (message.role) {
+                            Role.ASSISTANT.roleName -> {
+                                LeftView(message.content)
+                            }
 
-                        Role.USER.roleName -> {
-                            RightView(message.content)
-                        }
+                            Role.USER.roleName -> {
+                                RightView(message.content)
+                            }
 
-                        Role.SYSTEAM.roleName -> {
-                            Box(
-                                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                SelectionContainer {
-                                    Text(
-                                        text = message.content,
-                                        modifier = Modifier
-                                            .padding(5.dp)
-                                            .fillMaxWidth()
-                                            .wrapContentWidth(Alignment.CenterHorizontally),
-                                        color = Color.White,
-                                        textAlign = TextAlign.Center,
-                                        fontSize = 12.sp
-                                    )
+                            Role.SYSTEAM.roleName -> {
+                                Box(
+                                    modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    SelectionContainer {
+                                        Text(
+                                            text = message.content,
+                                            modifier = Modifier
+                                                .padding(5.dp)
+                                                .fillMaxWidth()
+                                                .wrapContentWidth(Alignment.CenterHorizontally),
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center,
+                                            fontSize = 12.sp
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (position == list.size - 1) {
-                        Spacer(modifier = Modifier.height(10.dp))
+                        if (position == list.size - 1) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                 }
-            }
-            if (list.isNotEmpty()) {
-                LaunchedEffect(key1 = list) {
-                    scrollState.animateScrollToItem(list.size - 1)
+                if (list.isNotEmpty()) {
+                    LaunchedEffect(key1 = list) {
+                        scrollState.animateScrollToItem(list.size - 1)
+                    }
                 }
+            } else {
+                EmptyMessage()
             }
         }
         val keyboardController = LocalSoftwareKeyboardController.current
