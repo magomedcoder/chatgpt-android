@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.magomedcoder.chatgpt.data.remote.ChatResponse
 import ru.magomedcoder.chatgpt.data.repository.ChatRepositoryImpl
+import ru.magomedcoder.chatgpt.domain.model.Dialog
 import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.domain.model.MessageDTO
 import ru.magomedcoder.chatgpt.utils.Helper
@@ -43,19 +44,55 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
         }
     }
 
-    fun sendContent(content: String) {
-        val message = Message(content = content, role = Role.USER.roleName)
-        viewModelScope.launch {
-            _chatRepository.fetchMessage(mutableListOf<MessageDTO>().apply {
-                _localList.value?.filter { it.role != Role.SYSTEAM.roleName }?.forEach {
-                    add(it.toDTO())
+    fun sendMessage(content: String) {
+        val dialogId = getDialogId()
+        if (dialogId != 0) {
+            val message = Message(dialogId = dialogId, content = content, role = Role.USER.roleName)
+            viewModelScope.launch {
+                _chatRepository.fetchMessage(mutableListOf<MessageDTO>().apply {
+                    _list.value?.filter { it.role != Role.SYSTEAM.roleName }?.forEach {
+                        add(it.toDTO())
+                    }
+                    insertMessage(message = message)
+                    add(message.toDTO())
+                }).onSuccess {
+                    dataProcess(it)
+                }.onFailure {
+                    insertMessage(
+                        Message(
+                            dialogId = dialogId,
+                            content = it.toString(),
+                            role = Role.SYSTEAM.roleName
+                        )
+                    )
                 }
-                insertMessage(message = message)
-                add(message.toDTO())
-            }).onSuccess {
-                dataProcess(it)
-            }.onFailure {
-                insertMessage(Message(content = it.toString(), role = Role.SYSTEAM.roleName))
+            }
+        } else {
+            viewModelScope.launch {
+                val newDialog = Dialog(title = "", last = System.currentTimeMillis())
+                _chatRepository.createDialog(newDialog).onSuccess { dialog ->
+                    val message = Message(
+                        dialogId = dialog.toInt(),
+                        content = content,
+                        role = Role.USER.roleName
+                    )
+                    _chatRepository.fetchMessage(mutableListOf<MessageDTO>().apply {
+                        _list.value?.filter { it.role != Role.SYSTEAM.roleName }?.forEach {
+                            add(it.toDTO())
+                        }
+                        insertMessage(message = message)
+                        add(message.toDTO())
+                    }).onSuccess {
+                        dataProcess(it)
+                    }.onFailure {
+                        insertMessage(
+                            Message(
+                                content = it.toString(),
+                                role = Role.SYSTEAM.roleName
+                            )
+                        )
+                    }
+                }
             }
         }
     }

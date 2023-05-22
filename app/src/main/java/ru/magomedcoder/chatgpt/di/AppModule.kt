@@ -8,6 +8,7 @@ import ru.magomedcoder.chatgpt.data.local.AppDatabase
 import ru.magomedcoder.chatgpt.data.remote.ChatApi
 import ru.magomedcoder.chatgpt.data.repository.ChatRepositoryImpl
 import ru.magomedcoder.chatgpt.ui.screen.ChatViewModel
+import ru.magomedcoder.chatgpt.ui.screen.HomeViewModel
 import ru.magomedcoder.chatgpt.utils.http.HttpClient
 import ru.magomedcoder.chatgpt.utils.http.NetworkHandler
 
@@ -27,12 +28,14 @@ val appModule = module {
 
 val dataModule = module {
     single { (get() as Retrofit).create(ChatApi::class.java) }
-    single { AppDatabase.getDBInstance(get()).messageDao() }
-    single { ChatRepositoryImpl(get(), get(), get()) }
+    single { AppDatabase.getDBInstance(get()).getDialogDao() }
+    single { AppDatabase.getDBInstance(get()).getMessageDao() }
+    single { ChatRepositoryImpl(get(), get(), get(), get()) }
 }
 
 val viewModelModule = module {
     single { ChatViewModel(get()) }
+    single { HomeViewModel(get()) }
 }
 
 val allModules = appModule + dataModule + viewModelModule

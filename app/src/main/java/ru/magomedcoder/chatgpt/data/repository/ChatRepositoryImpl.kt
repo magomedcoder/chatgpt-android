@@ -1,9 +1,11 @@
 package ru.magomedcoder.chatgpt.data.repository
 
+import ru.magomedcoder.chatgpt.data.local.DialogDao
 import ru.magomedcoder.chatgpt.data.local.MessageDao
 import ru.magomedcoder.chatgpt.data.remote.ChatApi
 import ru.magomedcoder.chatgpt.data.remote.ChatRequest
 import ru.magomedcoder.chatgpt.data.remote.ChatResponse
+import ru.magomedcoder.chatgpt.domain.model.Dialog
 import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.domain.model.MessageDTO
 import ru.magomedcoder.chatgpt.domain.repository.ChatRepository
@@ -12,7 +14,8 @@ import ru.magomedcoder.chatgpt.utils.http.NetworkHandler
 
 class ChatRepositoryImpl(
     private val _chatApi: ChatApi,
-    private val _chatDao: MessageDao,
+    private val _dialogDao: DialogDao,
+    private val _messageDao: MessageDao,
     private val _netWorkHandler: NetworkHandler
 ) : ChatRepository {
 
@@ -36,12 +39,17 @@ class ChatRepositoryImpl(
             e.printStackTrace()
             Result.failure(Failure.OtherError(e))
         }
+    }
 
+    fun createDialog(dialog: Dialog): Result<Long> {
+        return handleException {
+            _dialogDao.insert(dialog)
+        }
     }
 
     override fun insertMessage(message: Message): Result<Long> {
         return handleException {
-            _chatDao.insert(message)
+            _messageDao.insert(message)
         }
     }
 
@@ -53,16 +61,15 @@ class ChatRepositoryImpl(
         }
     }
 
-    override suspend fun getAllMessage(): Result<List<Message>> {
+    override suspend fun getAllMessage(id: Int): Result<List<Message>> {
         return handleException {
-            _chatDao.fetchAll()
+            _messageDao.fetchAll(id)
         }
     }
 
-
     override suspend fun clear(): Result<Unit> {
         return handleException {
-            _chatDao.deleteAll()
+            _messageDao.deleteAll()
         }
     }
 
