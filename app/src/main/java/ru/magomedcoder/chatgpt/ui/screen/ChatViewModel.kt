@@ -14,8 +14,8 @@ import ru.magomedcoder.chatgpt.utils.enums.Role
 
 class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel() {
 
-    private val _localList = MutableLiveData<List<Message>>()
-    var localList: LiveData<List<Message>> = _localList
+    private val _list = MutableLiveData<List<Message>>()
+    var list: LiveData<List<Message>> = _list
 
     init {
         getAllMessage()
@@ -60,10 +60,10 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
         }
     }
 
-    private fun getAllMessage() {
+    fun getAllMessage() {
         viewModelScope.launch {
-            _chatRepository.getAllMessage().onSuccess {
-                _localList.value = it
+            _chatRepository.getAllMessage(getDialogId()).onSuccess {
+                _list.value = it
                 Helper.log(it.toString())
             }.onFailure { }
         }
@@ -73,14 +73,16 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
         if (gtpResponse.error != null) {
             insertMessage(
                 Message(
-                    content = gtpResponse.error.message, role = Role.SYSTEAM.roleName
+                    content = gtpResponse.error.message,
+                    role = Role.SYSTEAM.roleName
                 )
             )
         } else {
             gtpResponse.choices.forEach {
                 insertMessage(
                     Message(
-                        content = filterDrayMessage(it.message.content), role = it.message.role
+                        content = filterDrayMessage(it.message.content),
+                        role = it.message.role
                     )
                 )
             }
@@ -88,7 +90,7 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
     }
 
     private fun updateList(onUpdate: (MutableList<Message>) -> Unit) {
-        _localList.value = _localList.value?.toMutableList()?.apply {
+        _list.value = _list.value?.toMutableList()?.apply {
             onUpdate.invoke(this)
         }
     }

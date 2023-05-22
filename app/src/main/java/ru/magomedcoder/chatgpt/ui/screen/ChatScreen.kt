@@ -1,6 +1,5 @@
 package ru.magomedcoder.chatgpt.ui.screen
 
-import ru.magomedcoder.chatgpt.ui.components.LeftView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +18,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,34 +25,47 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.get
-import ru.magomedcoder.chatgpt.R
 import ru.magomedcoder.chatgpt.ui.components.ChatTextField
+import ru.magomedcoder.chatgpt.ui.components.LeftView
 import ru.magomedcoder.chatgpt.ui.components.RightView
 import ru.magomedcoder.chatgpt.ui.theme.Purple80
 import ru.magomedcoder.chatgpt.utils.enums.Role
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MainScreen(viewModel: ChatViewModel) {
+fun ChatScreen(navController: NavHostController, dialogId: Int, viewModel: ChatViewModel) {
 
-    val list by viewModel.localList.observeAsState(emptyList())
+    val list by viewModel.list.observeAsState(emptyList())
     var text by remember { mutableStateOf(TextFieldValue("")) }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (topR, listR, bottomR) = createRefs()
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .constrainAs(topR) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-            .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(topR) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(id = R.string.app_name), modifier = Modifier.padding(10.dp))
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "",
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onClick = {
+                            navController.navigate("home")
+                        })
+                    .padding(10.dp)
+            )
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = "",
@@ -85,9 +97,11 @@ fun MainScreen(viewModel: ChatViewModel) {
                         Role.ASSISTANT.roleName -> {
                             LeftView(message.content)
                         }
+
                         Role.USER.roleName -> {
                             RightView(message.content)
                         }
+
                         Role.SYSTEAM.roleName -> {
                             Box(
                                 modifier = Modifier.padding(start = 20.dp, end = 20.dp),
@@ -127,8 +141,7 @@ fun MainScreen(viewModel: ChatViewModel) {
             end.linkTo(parent.end)
         }) {
             val (textR, sendR) = createRefs()
-            ChatTextField(
-                value = text,
+            ChatTextField(value = text,
                 onValueChange = { text = it },
                 modifier = Modifier
                     .constrainAs(textR) {
@@ -139,16 +152,16 @@ fun MainScreen(viewModel: ChatViewModel) {
                     .padding(5.dp),
                 onClick = {
                     keyboardController?.hide()
-                    viewModel.sendContent(text.text)
+                    viewModel.sendMessage(text.text)
                     text = TextFieldValue("")
-                }
-            )
+                })
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    MainScreen(get())
+fun Preview() {
+    val navController = rememberNavController()
+    ChatScreen(navController, 0, get())
 }
