@@ -10,7 +10,7 @@ interface ChatRepository {
 
     fun insertMessage(message: Message): Result<Long>
 
-    suspend fun getAllMessage(): Result<List<Message>>
+    suspend fun getAllMessage(id: Int): Result<List<Message>>
 
     suspend fun clear(): Result<Unit>
 

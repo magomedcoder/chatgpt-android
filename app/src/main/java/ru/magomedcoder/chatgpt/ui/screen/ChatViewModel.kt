@@ -21,6 +21,11 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
     init {
         getAllMessage()
     }
+
+    private fun getDialogId(): Int {
+        return 0
+    }
+
     private fun insertMessage(message: Message) {
         viewModelScope.launch {
             _chatRepository.insertMessage(message).onSuccess {
@@ -145,7 +150,7 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
     fun clear() {
         viewModelScope.launch {
             _chatRepository.clear().onSuccess {
-                getAllMessage()
+//                getAllMessage()
             }.onFailure {}
         }
     }

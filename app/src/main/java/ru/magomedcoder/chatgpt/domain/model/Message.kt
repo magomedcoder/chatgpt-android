@@ -11,6 +11,7 @@ data class Message(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @Expose @SerializedName("role") val role: String,
     @Expose @SerializedName("content") val content: String,
+    val dialogId: Int = 0,
     val responseTime: Long = 1,
     val insertTime: Long = System.currentTimeMillis(),
     var status: Int = MessageStatus.UNFINISHED.status

@@ -47,6 +47,12 @@ class ChatRepositoryImpl(
         }
     }
 
+    fun queryAllDialog(): Result<List<Dialog>> {
+        return handleException {
+            _dialogDao.queryAll()
+        }
+    }
+
     override fun insertMessage(message: Message): Result<Long> {
         return handleException {
             _messageDao.insert(message)

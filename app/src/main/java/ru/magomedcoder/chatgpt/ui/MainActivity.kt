@@ -39,7 +39,7 @@ fun NavigationView() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeScreen(navController)
+            HomeScreen(navController, get())
         }
         composable("chat") {
             val args = it.arguments
