@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -16,13 +14,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
@@ -30,10 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.get
 import ru.magomedcoder.chatgpt.ui.components.ChatTextField
 import ru.magomedcoder.chatgpt.ui.components.EmptyMessage
-import ru.magomedcoder.chatgpt.ui.components.LeftView
-import ru.magomedcoder.chatgpt.ui.components.RightView
+import ru.magomedcoder.chatgpt.ui.components.MessageList
 import ru.magomedcoder.chatgpt.ui.theme.Purple80
-import ru.magomedcoder.chatgpt.utils.enums.Role
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -91,44 +84,7 @@ fun ChatScreen(navController: NavHostController, dialogId: Int, viewModel: ChatV
             .background(Purple80)) {
             if (list.isNotEmpty()) {
                 val scrollState = rememberLazyListState()
-                LazyColumn(state = scrollState) {
-                    items(list.size) { position ->
-                        Spacer(modifier = Modifier.height(10.dp))
-                        val message = list[position]
-                        when (message.role) {
-                            Role.ASSISTANT.roleName -> {
-                                LeftView(message.content)
-                            }
-
-                            Role.USER.roleName -> {
-                                RightView(message.content)
-                            }
-
-                            Role.SYSTEAM.roleName -> {
-                                Box(
-                                    modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    SelectionContainer {
-                                        Text(
-                                            text = message.content,
-                                            modifier = Modifier
-                                                .padding(5.dp)
-                                                .fillMaxWidth()
-                                                .wrapContentWidth(Alignment.CenterHorizontally),
-                                            color = Color.White,
-                                            textAlign = TextAlign.Center,
-                                            fontSize = 12.sp
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        if (position == list.size - 1) {
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
-                    }
-                }
+                MessageList(list)
                 if (list.isNotEmpty()) {
                     LaunchedEffect(key1 = list) {
                         scrollState.animateScrollToItem(list.size - 1)
