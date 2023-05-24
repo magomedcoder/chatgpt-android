@@ -65,7 +65,8 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
                 }.onFailure {
                     insertMessage(
                         Message(
-                            dialogId = dialogId,
+//                            dialogId = dialogId,
+                            dialogId = 0,
                             content = it.toString(),
                             role = Role.SYSTEAM.roleName
                         )
@@ -77,7 +78,8 @@ class ChatViewModel(private val _chatRepository: ChatRepositoryImpl) : ViewModel
                 val newDialog = Dialog(title = "", last = System.currentTimeMillis())
                 _chatRepository.createDialog(newDialog).onSuccess { dialog ->
                     val message = Message(
-                        dialogId = dialog.toInt(),
+//                        dialogId = dialog.toInt(),
+                        dialogId = 0,
                         content = content,
                         role = Role.USER.roleName
                     )

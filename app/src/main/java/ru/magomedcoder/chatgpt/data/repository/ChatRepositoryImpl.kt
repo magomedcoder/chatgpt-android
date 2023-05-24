@@ -1,5 +1,6 @@
 package ru.magomedcoder.chatgpt.data.repository
 
+import ru.magomedcoder.chatgpt.GlobalConfig
 import ru.magomedcoder.chatgpt.data.local.DialogDao
 import ru.magomedcoder.chatgpt.data.local.MessageDao
 import ru.magomedcoder.chatgpt.data.remote.ChatApi
@@ -61,7 +62,7 @@ class ChatRepositoryImpl(
 
     override suspend fun fetchMessage(messageList: List<MessageDTO>): Result<ChatResponse> {
         return handleRemoteException {
-            val chatRequest = ChatRequest(messageList, "model?")
+            val chatRequest = ChatRequest(messageList, GlobalConfig.chatModel)
             val response = _chatApi.completions(chatRequest)
             response
         }

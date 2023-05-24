@@ -11,6 +11,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import ru.magomedcoder.chatgpt.di.allModules
+import ru.magomedcoder.chatgpt.utils.persistence.Preference
 import kotlin.properties.Delegates
 
 class App : Application() {
@@ -22,6 +23,7 @@ class App : Application() {
     override fun onCreate() {
         instance = this
         super.onCreate()
+        initPreference()
         initLogger()
         initMultiDex()
         initKoin()
@@ -44,6 +46,10 @@ class App : Application() {
             androidContext(this@App)
             modules(allModules)
         }
+    }
+
+    private fun initPreference() {
+        Preference.init(this, Constants.PREFERENCE_NAME)
     }
 
     private fun initMultiDex() {
