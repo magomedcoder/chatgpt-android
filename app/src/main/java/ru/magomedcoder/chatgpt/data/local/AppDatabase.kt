@@ -6,15 +6,22 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.magomedcoder.chatgpt.Constants
 import ru.magomedcoder.chatgpt.data.local.dao.DialogDao
+import ru.magomedcoder.chatgpt.data.local.dao.ImageDao
 import ru.magomedcoder.chatgpt.data.local.dao.MessageDao
 import ru.magomedcoder.chatgpt.domain.model.Dialog
+import ru.magomedcoder.chatgpt.domain.model.Image
 import ru.magomedcoder.chatgpt.domain.model.Message
 
-@Database(entities = [Dialog::class, Message::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Dialog::class, Message::class, Image::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getDialogDao(): DialogDao
     abstract fun getMessageDao(): MessageDao
+    abstract fun getImageDao(): ImageDao
 
     companion object {
         @Volatile

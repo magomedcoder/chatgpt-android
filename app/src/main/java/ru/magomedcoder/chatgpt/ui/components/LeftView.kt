@@ -3,9 +3,11 @@ package ru.magomedcoder.chatgpt.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,7 +27,7 @@ import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.utils.Enums
 
 @Composable
-fun LeftView(message: Message, OnDelete: () -> Unit) {
+fun LeftView(message: Message, OnDelete: () -> Unit, OnTextToSpeech: () -> Unit) {
     val content = message.content
     var isDeleteVisible by remember { mutableStateOf(false) }
     ConstraintLayout(
@@ -33,22 +35,19 @@ fun LeftView(message: Message, OnDelete: () -> Unit) {
             .padding(start = 10.dp, end = 120.dp)
             .fillMaxWidth()
     ) {
-        val (head, text, delete) = createRefs()
-        SelectionContainer(
-            modifier = Modifier
-                .padding(start = 7.dp)
-                .constrainAs(text) {
-                    start.linkTo(head.end)
-                    top.linkTo(head.top)
-                }
-        ) {
+        val (head, text, delete, retry) = createRefs()
+        SelectionContainer(modifier = Modifier
+            .padding(start = 7.dp)
+            .constrainAs(text) {
+                start.linkTo(head.end)
+                top.linkTo(head.top)
+            }) {
             Card(
                 modifier = Modifier
                     .padding(end = 7.dp)
                     .clickable {
                         isDeleteVisible = !isDeleteVisible
-                    },
-                colors = CardDefaults.cardColors(
+                    }, colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF020202)
                 )
             ) {
@@ -58,25 +57,32 @@ fun LeftView(message: Message, OnDelete: () -> Unit) {
                     )
                 } else {
                     Text(
-                        text = content,
-                        color = Color.White,
-                        modifier = Modifier.padding(15.dp)
+                        text = content, color = Color.White, modifier = Modifier.padding(15.dp)
                     )
                 }
             }
         }
-        IconButton(
-            modifier = Modifier.constrainAs(delete) {
-                start.linkTo(text.end)
-                top.linkTo(text.top)
-            },
-            onClick = {
+        if (isDeleteVisible) {
+            IconButton(modifier = Modifier
+                .constrainAs(delete) {
+                    start.linkTo(text.end)
+                    top.linkTo(text.top)
+                }
+                .width(100.dp), onClick = {
                 OnDelete.invoke()
-            }
-        ) {
-            if (isDeleteVisible) {
+            }) {
                 Icon(Icons.Filled.Clear, null)
             }
+        }
+        IconButton(modifier = Modifier
+            .constrainAs(retry) {
+                start.linkTo(text.end)
+                top.linkTo(text.top)
+            }
+            .width(25.dp), onClick = {
+            OnTextToSpeech.invoke()
+        }) {
+            Icon(Icons.Filled.PlayArrow, null)
         }
     }
 }
@@ -84,5 +90,5 @@ fun LeftView(message: Message, OnDelete: () -> Unit) {
 @Preview
 @Composable
 fun LeftViewPreview() {
-    LeftView(Message(1, Enums.ASSISTANT.roleName, "Test")) {}
+    LeftView(Message(1, Enums.ASSISTANT.roleName, "Test"), {}) {}
 }

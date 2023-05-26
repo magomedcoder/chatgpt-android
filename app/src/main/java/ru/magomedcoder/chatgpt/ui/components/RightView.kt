@@ -40,8 +40,7 @@ fun RightView(message: Message, onDelete: () -> Unit, onRetry: () -> Unit) {
         horizontalArrangement = Arrangement.End
     ) {
         ConstraintLayout(
-            modifier = Modifier
-                .padding(end = 5.dp, start = 60.dp)
+            modifier = Modifier.padding(end = 5.dp, start = 60.dp)
         ) {
             val (head, text, delete, retry) = createRefs()
             SelectionContainer(modifier = Modifier.constrainAs(text) {
@@ -49,8 +48,7 @@ fun RightView(message: Message, onDelete: () -> Unit, onRetry: () -> Unit) {
                 end.linkTo(head.start)
             }) {
                 Card(
-                    modifier = Modifier.padding(start = 7.dp),
-                    colors = CardDefaults.cardColors(
+                    modifier = Modifier.padding(start = 7.dp), colors = CardDefaults.cardColors(
                         containerColor = Color(0xFF020202)
                     )
                 ) {
@@ -58,9 +56,7 @@ fun RightView(message: Message, onDelete: () -> Unit, onRetry: () -> Unit) {
                         isOperateVisible = !isOperateVisible
                     }) {
                         Text(
-                            text = content,
-                            color = Color.White,
-                            modifier = Modifier.padding(15.dp)
+                            text = content, color = Color.White, modifier = Modifier.padding(15.dp)
                         )
                     }
                 }
@@ -95,5 +91,5 @@ fun RightView(message: Message, onDelete: () -> Unit, onRetry: () -> Unit) {
 @Preview
 @Composable
 fun RightViewPreview() {
-    LeftView(Message(1, Enums.USER.roleName, "Test")) {}
+    RightView(Message(1, Enums.USER.roleName, "Test"), {}) {}
 }

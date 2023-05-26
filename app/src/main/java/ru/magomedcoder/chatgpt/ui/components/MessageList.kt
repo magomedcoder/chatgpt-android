@@ -1,5 +1,6 @@
 package ru.magomedcoder.chatgpt.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import ru.magomedcoder.chatgpt.utils.Enums
 
 @Composable
 fun MessageList(
+    context: Context,
     list: List<Message>,
     viewModel: ChatViewModel,
     volumeState: VolumeState,
@@ -64,10 +66,17 @@ fun MessageList(
                 Spacer(modifier = Modifier.height(10.dp))
                 val message = list[position]
                 when (message.role) {
-                    Enums.ASSISTANT.roleName -> LeftView(message) {
-                        viewModel.alreadyDeleteMessage = message
-                        isShowDeleteDialog = true
-                    }
+                    Enums.ASSISTANT.roleName -> LeftView(
+                        message,
+                        {
+                            viewModel.alreadyDeleteMessage = message
+                            isShowDeleteDialog = true
+                        },
+                        {
+                            viewModel.onTextFieldValueChange(message.content)
+                            viewModel.textToSpeech(context)
+                        }
+                    )
 
                     Enums.USER.roleName -> RightView(message, {
                         viewModel.alreadyDeleteMessage = message

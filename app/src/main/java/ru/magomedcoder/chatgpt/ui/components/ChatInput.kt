@@ -34,6 +34,7 @@ fun ChatInput(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     onClick: () -> Unit,
+    onRecordingClick: () -> Unit,
 ) {
     val textEmpty: Boolean by derivedStateOf { value.text.isEmpty() }
     Surface(
@@ -87,6 +88,19 @@ fun ChatInput(
                         )
                     }
                 }
+//                if (textEmpty) {
+//                    ChatButton(
+//                        onClick = { onRecordingClick.invoke() },
+//                        modifier = Modifier.then(Modifier.size(44.dp)),
+//                        indication = rememberRipple(bounded = false, radius = 44.dp / 2)
+//                    ) {
+//                        Icon(
+//                            Icons.Filled.PlayArrow,
+//                            contentDescription = null,
+//                            tint = Color.White
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -102,6 +116,7 @@ fun ChatInputPreview() {
         modifier = Modifier.padding(5.dp),
         onClick = {
             text = TextFieldValue("")
-        }
+        },
+        onRecordingClick = {}
     )
 }

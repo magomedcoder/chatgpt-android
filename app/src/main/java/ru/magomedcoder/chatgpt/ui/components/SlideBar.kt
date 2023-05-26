@@ -48,7 +48,8 @@ fun SideBar(
     currentDialog: Dialog,
     onButtonClick: () -> Unit,
     onItemClick: (Dialog) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onScreen: () -> Unit,
 ) {
     var isShowEditKey by remember { mutableStateOf(false) }
     var isAboutDialog by remember { mutableStateOf(false) }
@@ -77,10 +78,18 @@ fun SideBar(
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                 val (cleaR) = createRefs()
-                Button(
-                    onClick = { onButtonClick.invoke() }
-                ) {
-                    Text(text = "Создать диалог")
+                Row() {
+                    Button(
+                        onClick = { onButtonClick.invoke() }
+                    ) {
+                        Text(text = "Создать диалог")
+                    }
+                    Button(
+                        modifier = Modifier.padding(start = 16.dp),
+                        onClick = { onScreen.invoke() }
+                    ) {
+                        Text(text = "Изображение")
+                    }
                 }
                 Column(modifier = Modifier
                     .width(30.dp)
@@ -221,5 +230,5 @@ fun SideBarPreview() {
         add(Dialog(title = "Test 2", lastDialogTime = System.currentTimeMillis()))
         add(Dialog(title = "Test 3", lastDialogTime = System.currentTimeMillis()))
         add(Dialog(id = 1, title = "Test 4", lastDialogTime = System.currentTimeMillis()))
-    }, currentDialog, onButtonClick = { }, {}, {})
+    }, currentDialog, onButtonClick = { }, {}, {}, {})
 }
