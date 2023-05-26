@@ -11,12 +11,15 @@ interface BaseDao<T> {
     fun insert(t: T): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(list: MutableList<T>)
+    fun insert(list: List<T>)
 
     @Update
     fun update(entity: T)
 
     @Delete
     fun delete(entity: T)
+
+    @Delete
+    fun delete(list: List<T>)
 
 }

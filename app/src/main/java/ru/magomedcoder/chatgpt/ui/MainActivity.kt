@@ -6,48 +6,28 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.compose.get
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.magomedcoder.chatgpt.ui.screen.ChatScreen
-import ru.magomedcoder.chatgpt.ui.screen.HomeScreen
+import ru.magomedcoder.chatgpt.ui.screen.ChatViewModel
 import ru.magomedcoder.chatgpt.ui.theme.ChatGPTTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: ChatViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ChatGPTTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    NavigationView()
+                    MaterialTheme.colorScheme.primary
+                    ChatScreen(viewModel)
                 }
             }
         }
     }
 
-}
-
-@Composable
-fun NavigationView() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(navController, get())
-        }
-        composable("chat") {
-            val args = it.arguments
-            var id = args?.getInt("id")
-            if (id == null) {
-                id = 0
-            }
-            ChatScreen(navController, id, get())
-        }
-    }
 }

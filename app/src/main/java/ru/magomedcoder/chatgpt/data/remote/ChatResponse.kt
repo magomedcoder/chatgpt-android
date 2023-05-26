@@ -9,19 +9,9 @@ data class ChatResponse(
     @SerializedName("id") val id: String,
     @SerializedName("model") val model: String,
     @SerializedName("object") val objectX: String,
+    @SerializedName("usage") val usage: Usage,
     @SerializedName("error")
     val error: Error?
-)
-
-data class Error(
-    @SerializedName("code")
-    val code: String,
-    @SerializedName("message")
-    val message: String,
-    @SerializedName("param")
-    val `param`: Any,
-    @SerializedName("type")
-    val type: String
 )
 
 data class Choice(
@@ -29,3 +19,10 @@ data class Choice(
     @SerializedName("index") val index: Int,
     @SerializedName("message") val message: MessageDTO
 )
+
+data class Usage(
+    @SerializedName("completion_tokens") val completionTokens: Int,
+    @SerializedName("prompt_tokens") val promptTokens: Int,
+    @SerializedName("total_tokens") val totalTokens: Int
+)
+

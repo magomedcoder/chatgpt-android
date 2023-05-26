@@ -23,13 +23,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.magomedcoder.chatgpt.GlobalConfig
+import ru.magomedcoder.chatgpt.Constants
 import ru.magomedcoder.chatgpt.ui.theme.Purple40
 import ru.magomedcoder.chatgpt.ui.theme.Purple80
 
 @Composable
 fun KeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit = {}) {
-    var key by remember { mutableStateOf(GlobalConfig.apiKey) }
+    var key by remember { mutableStateOf(Constants.GlobalConfig.apiKey) }
     AlertDialog(
         title = {
             Text(

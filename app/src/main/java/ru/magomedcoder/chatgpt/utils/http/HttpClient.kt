@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 class HttpClient {
 
-    private val timeout = 30L
+    private val timeout = 90L
 
     private val mClient: OkHttpClient by lazy {
         val httpLoggingInterceptor =
@@ -16,7 +16,6 @@ class HttpClient {
         OkHttpClient.Builder()
             .connectTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
-            .addInterceptor(HeaderInterceptor())
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(ErrorInterceptor())
             .build()

@@ -1,6 +1,6 @@
 package ru.magomedcoder.chatgpt.data.repository
 
-import ru.magomedcoder.chatgpt.GlobalConfig
+import ru.magomedcoder.chatgpt.Constants
 import ru.magomedcoder.chatgpt.data.local.DialogDao
 import ru.magomedcoder.chatgpt.data.local.MessageDao
 import ru.magomedcoder.chatgpt.data.remote.ChatApi
@@ -15,8 +15,8 @@ import ru.magomedcoder.chatgpt.utils.http.NetworkHandler
 
 class ChatRepositoryImpl(
     private val _chatApi: ChatApi,
-    private val _dialogDao: DialogDao,
     private val _messageDao: MessageDao,
+    private val _dialogDao: DialogDao,
     private val _netWorkHandler: NetworkHandler
 ) : ChatRepository {
 
@@ -42,6 +42,40 @@ class ChatRepositoryImpl(
         }
     }
 
+    fun queryMessageBySID(dialogID: Int): Result<List<Message>> {
+        return handleException {
+            _messageDao.selectMessageByDialogID(dialogID)
+        }
+    }
+
+    suspend fun fetchMessage(messageList: List<MessageDTO>): Result<ChatResponse> {
+        return handleRemoteException {
+            val chatRequest = ChatRequest(messageList, Constants.GlobalConfig.chatModel)
+            val response =
+                _chatApi.completions("Bearer ${Constants.GlobalConfig.apiKey}", chatRequest)
+            response
+        }
+    }
+
+    fun insertMessage(message: Message): Result<Long> {
+        return handleException {
+            _messageDao.insert(message)
+        }
+    }
+
+
+    fun deleteMessage(message: Message): Result<Unit> {
+        return handleException {
+            _messageDao.delete(message)
+        }
+    }
+
+    fun deleteMessage(message: List<Message>): Result<Unit> {
+        return handleException {
+            _messageDao.delete(message)
+        }
+    }
+
     fun createDialog(dialog: Dialog): Result<Long> {
         return handleException {
             _dialogDao.insert(dialog)
@@ -50,33 +84,32 @@ class ChatRepositoryImpl(
 
     fun queryAllDialog(): Result<List<Dialog>> {
         return handleException {
-            _dialogDao.queryAll()
+            _dialogDao.queryAllDialog()
         }
     }
 
-    override fun insertMessage(message: Message): Result<Long> {
+    fun queryLeastDialog(): Result<Dialog?> {
         return handleException {
-            _messageDao.insert(message)
+            _dialogDao.queryLeastDialog()
         }
     }
 
-    override suspend fun fetchMessage(messageList: List<MessageDTO>): Result<ChatResponse> {
-        return handleRemoteException {
-            val chatRequest = ChatRequest(messageList, GlobalConfig.chatModel)
-            val response = _chatApi.completions(chatRequest)
-            response
-        }
-    }
-
-    override suspend fun getAllMessage(id: Int): Result<List<Message>> {
+    fun updateDialogTime(id: Int, lastDialognTime: Long): Result<Unit> {
         return handleException {
-            _messageDao.fetchAll(id)
+            _dialogDao.updateDialogTime(id, lastDialognTime)
         }
     }
 
-    override suspend fun clear(): Result<Unit> {
+    fun updateDialogTitle(id: Int, title: String): Result<Unit> {
         return handleException {
-            _messageDao.deleteAll()
+            _dialogDao.updateDialogTitle(id, title)
+        }
+    }
+
+    suspend fun clear(dialog: Dialog): Result<Unit> {
+        return handleException {
+            _messageDao.deleteAll(dialog.id)
+            _dialogDao.delete(dialog)
         }
     }
 

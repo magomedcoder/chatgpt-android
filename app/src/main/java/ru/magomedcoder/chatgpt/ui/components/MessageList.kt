@@ -1,64 +1,54 @@
 package ru.magomedcoder.chatgpt.ui.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import ru.magomedcoder.chatgpt.domain.model.Message
-import ru.magomedcoder.chatgpt.utils.enums.Role
+import ru.magomedcoder.chatgpt.ui.screen.ChatViewModel
+import ru.magomedcoder.chatgpt.utils.Enums
 
 @Composable
-fun MessageList(list: List<Message> = emptyList()) {
-    val scrollState = rememberLazyListState()
-    LazyColumn(state = scrollState) {
-        items(list.size) { position ->
-            Spacer(modifier = Modifier.height(10.dp))
-            val message = list[position]
-            when (message.role) {
-                Role.ASSISTANT.roleName -> {
-                    LeftView(message.content)
-                }
-
-                Role.USER.roleName -> {
-                    RightView(message.content)
-                }
-
-                Role.SYSTEAM.roleName -> {
-                    Box(
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        SelectionContainer {
-                            Text(
-                                text = message.content,
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.CenterHorizontally),
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
-                }
-            }
-            if (position == list.size - 1) {
+fun MessageList(
+    list: List<Message>,
+    viewModel: ChatViewModel,
+    modifier: Modifier
+) {
+    val scrollListState = rememberLazyListState()
+    ConstraintLayout(modifier = modifier) {
+        if (list.isEmpty()) {
+            EmptyMessage()
+        }
+        LazyColumn(
+            state = scrollListState,
+        ) {
+            items(list.size) { position ->
                 Spacer(modifier = Modifier.height(10.dp))
+                val message = list[position]
+                when (message.role) {
+                    Enums.ASSISTANT.roleName -> LeftView(message)
+
+                    Enums.USER.roleName -> RightView(message)
+
+                    Enums.SYSTEM.roleName -> Text(text = "Ошибка: $message")
+                }
+                if (position == list.size - 1) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
         }
+        if (list.isNotEmpty() && viewModel.isBottom) {
+            LaunchedEffect(key1 = list) {
+                scrollListState.animateScrollToItem(list.size - 1)
+                viewModel.isBottom = false
+            }
+        }
+
     }
 }

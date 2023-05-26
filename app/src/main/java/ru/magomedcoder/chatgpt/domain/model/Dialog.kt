@@ -8,5 +8,5 @@ data class Dialog(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val title: String,
-    val last: Long
+    val lastDialogTime: Long
 )
