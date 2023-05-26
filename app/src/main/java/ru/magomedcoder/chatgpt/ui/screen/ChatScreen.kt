@@ -21,9 +21,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import ru.magomedcoder.chatgpt.Constants
 import ru.magomedcoder.chatgpt.domain.model.Dialog
 import ru.magomedcoder.chatgpt.ui.components.AppTopBar
 import ru.magomedcoder.chatgpt.ui.components.ChatInput
+import ru.magomedcoder.chatgpt.ui.components.KeyDialog
 import ru.magomedcoder.chatgpt.ui.components.MessageList
 import ru.magomedcoder.chatgpt.ui.components.SideBar
 import ru.magomedcoder.chatgpt.ui.theme.Purple40
@@ -41,6 +43,19 @@ fun ChatScreen(viewModel: ChatViewModel) {
             lastDialogTime = System.currentTimeMillis()
         )
     )
+    var isShowEditKey by remember { mutableStateOf(false) }
+    if (Constants.GlobalConfig.apiKey.isEmpty()) {
+        isShowEditKey = true
+        if (isShowEditKey) {
+            KeyDialog(
+                onConfirm = {
+                    Constants.GlobalConfig.apiKey = it
+                    isShowEditKey = false
+                },
+                onDismiss = {}
+            )
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

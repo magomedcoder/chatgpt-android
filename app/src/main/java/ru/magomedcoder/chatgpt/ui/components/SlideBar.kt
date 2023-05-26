@@ -3,6 +3,7 @@ package ru.magomedcoder.chatgpt.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +51,10 @@ fun SideBar(
     onDismiss: () -> Unit
 ) {
     var isShowEditKey by remember { mutableStateOf(false) }
+    var isAboutDialog by remember { mutableStateOf(false) }
+    if (Constants.GlobalConfig.apiKey.isEmpty()) {
+        isShowEditKey = true
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxHeight()
@@ -68,7 +73,7 @@ fun SideBar(
                     indication = null,
                     interactionSource = MutableInteractionSource()
                 )
-                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 16.dp)
+                .padding(start = 16.dp, top = 50.dp, bottom = 16.dp, end = 16.dp)
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                 val (cleaR) = createRefs()
@@ -172,6 +177,24 @@ fun SideBar(
                 }
             }
         }
+        Box(modifier = Modifier
+            .constrainAs(bottomR) {
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+            .fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Text(
+                color = Color.White,
+                text = "О приложении",
+                modifier = Modifier
+                    .padding(top = 10.dp, bottom = 10.dp)
+                    .clickable {
+                        isAboutDialog = true
+                    },
+
+                )
+        }
     }
     if (isShowEditKey) {
         KeyDialog(
@@ -183,6 +206,9 @@ fun SideBar(
                 isShowEditKey = false
             }
         )
+    }
+    if (isAboutDialog) {
+        AboutDialog(onDismiss = { isAboutDialog = false })
     }
 }
 
