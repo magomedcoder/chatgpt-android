@@ -1,4 +1,4 @@
-package ru.magomedcoder.chatgpt.data.local
+package ru.magomedcoder.chatgpt.data.local.dao
 
 import androidx.room.Delete
 import androidx.room.Insert

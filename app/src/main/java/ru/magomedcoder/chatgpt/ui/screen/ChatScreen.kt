@@ -23,6 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import ru.magomedcoder.chatgpt.Constants
 import ru.magomedcoder.chatgpt.domain.model.Dialog
+import ru.magomedcoder.chatgpt.domain.model.VolumeState
 import ru.magomedcoder.chatgpt.ui.components.AppTopBar
 import ru.magomedcoder.chatgpt.ui.components.ChatInput
 import ru.magomedcoder.chatgpt.ui.components.KeyDialog
@@ -35,6 +36,7 @@ import ru.magomedcoder.chatgpt.ui.theme.Purple40
 fun ChatScreen(viewModel: ChatViewModel) {
     val dialogs by viewModel.dialogList.observeAsState(emptyList())
     val list by viewModel.messageList.observeAsState(emptyList())
+    val volumeState by viewModel.volumeState.observeAsState(VolumeState())
     var text by remember { mutableStateOf(TextFieldValue("")) }
     var isVisible by remember { mutableStateOf(false) }
     val currentDialog by viewModel.currentDialog.observeAsState(
@@ -46,15 +48,6 @@ fun ChatScreen(viewModel: ChatViewModel) {
     var isShowEditKey by remember { mutableStateOf(false) }
     if (Constants.GlobalConfig.apiKey.isEmpty()) {
         isShowEditKey = true
-        if (isShowEditKey) {
-            KeyDialog(
-                onConfirm = {
-                    Constants.GlobalConfig.apiKey = it
-                    isShowEditKey = false
-                },
-                onDismiss = {}
-            )
-        }
     }
     Box(
         modifier = Modifier
@@ -79,6 +72,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
             MessageList(
                 list,
                 viewModel,
+                volumeState,
                 modifier = Modifier.constrainAs(listR) {
                     top.linkTo(topR.bottom)
                     bottom.linkTo(bottomR.top)
@@ -86,6 +80,9 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
                     width = Dimension.fillToConstraints
+                },
+                onShowEditKeyClick = {
+                    isShowEditKey = true
                 }
             )
             val keyboardController = LocalSoftwareKeyboardController.current
@@ -140,6 +137,15 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 }
             )
         }
+    }
+    if (isShowEditKey) {
+        KeyDialog(
+            onConfirm = {
+                Constants.GlobalConfig.apiKey = it
+                isShowEditKey = false
+            },
+            onDismiss = {}
+        )
     }
 }
 

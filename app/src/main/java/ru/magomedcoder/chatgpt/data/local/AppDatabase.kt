@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.magomedcoder.chatgpt.Constants
+import ru.magomedcoder.chatgpt.data.local.dao.DialogDao
+import ru.magomedcoder.chatgpt.data.local.dao.MessageDao
 import ru.magomedcoder.chatgpt.domain.model.Dialog
 import ru.magomedcoder.chatgpt.domain.model.Message
 

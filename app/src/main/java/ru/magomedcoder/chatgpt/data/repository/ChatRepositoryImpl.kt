@@ -1,8 +1,8 @@
 package ru.magomedcoder.chatgpt.data.repository
 
 import ru.magomedcoder.chatgpt.Constants
-import ru.magomedcoder.chatgpt.data.local.DialogDao
-import ru.magomedcoder.chatgpt.data.local.MessageDao
+import ru.magomedcoder.chatgpt.data.local.dao.DialogDao
+import ru.magomedcoder.chatgpt.data.local.dao.MessageDao
 import ru.magomedcoder.chatgpt.data.remote.ChatApi
 import ru.magomedcoder.chatgpt.data.remote.ChatRequest
 import ru.magomedcoder.chatgpt.data.remote.ChatResponse
@@ -63,6 +63,11 @@ class ChatRepositoryImpl(
         }
     }
 
+    fun insertMessages(messages: List<Message>): Result<Unit> {
+        return handleException {
+            _messageDao.insert(messages)
+        }
+    }
 
     fun deleteMessage(message: Message): Result<Unit> {
         return handleException {
@@ -73,6 +78,12 @@ class ChatRepositoryImpl(
     fun deleteMessage(message: List<Message>): Result<Unit> {
         return handleException {
             _messageDao.delete(message)
+        }
+    }
+
+    suspend fun queryAllMessage(): Result<List<Message>> {
+        return handleException {
+            _messageDao.queryAll()
         }
     }
 

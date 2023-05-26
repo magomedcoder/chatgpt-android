@@ -60,7 +60,7 @@ fun KeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit = {}) {
                             .clickable {
                                 uriHandler.openUri("https://platform.openai.com/account/api-keys")
                             },
-                        text = "Создать токен",
+                        text = "Создать ключ",
                         color = Color(0xFFFFFFFF),
                         fontSize = 15.sp,
                         textDecoration = TextDecoration.Underline

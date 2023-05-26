@@ -12,6 +12,7 @@ import ru.magomedcoder.chatgpt.data.repository.ChatRepositoryImpl
 import ru.magomedcoder.chatgpt.domain.model.Dialog
 import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.domain.model.MessageDTO
+import ru.magomedcoder.chatgpt.domain.model.VolumeState
 import ru.magomedcoder.chatgpt.utils.Enums
 import ru.magomedcoder.chatgpt.utils.Failure
 
@@ -23,7 +24,10 @@ class ChatViewModel(private val _chatRepositoryImpl: ChatRepositoryImpl) : ViewM
     val dialogList: LiveData<List<Dialog>> = _dialogList
     private val _messageList = MutableLiveData<List<Message>>()
     var messageList: LiveData<List<Message>> = _messageList
+    private val _volumeState = MutableLiveData<VolumeState>()
+    val volumeState: LiveData<VolumeState> = _volumeState
     var isBottom = true
+    var alreadyDeleteMessage: Message? = null
 
     init {
         queryLeastDialog()
@@ -127,7 +131,7 @@ class ChatViewModel(private val _chatRepositoryImpl: ChatRepositoryImpl) : ViewM
                 }
                 add(message.toDTO())
             }).onSuccess {
-                data(it, dialogId)
+                repDataProcess(it, dialogId)
             }.onFailure {
                 if ((it as Failure.OtherError).throwable !is CancellationException) {
                     removeLastEmptyMessage(dialogId)
@@ -156,11 +160,11 @@ class ChatViewModel(private val _chatRepositoryImpl: ChatRepositoryImpl) : ViewM
         }
     }
 
-    private fun data(response: ChatResponse, dialogId: Int) {
+    private fun repDataProcess(response: ChatResponse, dialogId: Int) {
         if (response.error != null) {
             insertMessage(
                 Message(
-                    content = response.error.message!!,
+                    content = response.error.message,
                     role = Enums.SYSTEM.roleName,
                     dialogId = dialogId,
                 )
@@ -261,6 +265,11 @@ class ChatViewModel(private val _chatRepositoryImpl: ChatRepositoryImpl) : ViewM
             newMessage = newMessage.substring(index + nextLineSymbol.length, newMessage.length)
         }
         return newMessage
+    }
+
+    fun setVolumeState(touchDown: Boolean = false, touchUp: Boolean = false) {
+        _volumeState.value = VolumeState()
+        _volumeState.value = VolumeState(touchDown, touchUp)
     }
 
 }

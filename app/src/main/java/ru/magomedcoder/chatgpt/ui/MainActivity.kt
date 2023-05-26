@@ -1,6 +1,7 @@
 package ru.magomedcoder.chatgpt.ui
 
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,21 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                viewModel.setVolumeState(touchDown = true)
+                return true
+            }
+
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                viewModel.setVolumeState(touchUp = true)
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
 }

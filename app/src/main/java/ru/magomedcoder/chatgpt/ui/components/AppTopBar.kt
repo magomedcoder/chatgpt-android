@@ -105,7 +105,7 @@ fun AppTopBar(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton({}) {
-                                Icon(Icons.Filled.Delete, contentDescription = null)
+                                Icon(Icons.Filled.Delete, null)
                             }
                             Text(text = "Удалить")
                         }

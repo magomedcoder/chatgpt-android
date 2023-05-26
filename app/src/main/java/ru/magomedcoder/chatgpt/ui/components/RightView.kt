@@ -6,9 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +30,7 @@ import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.utils.Enums
 
 @Composable
-fun RightView(message: Message) {
+fun RightView(message: Message, onDelete: () -> Unit, onRetry: () -> Unit) {
     val content = message.content
     var isOperateVisible by remember { mutableStateOf(false) }
     Row(
@@ -37,7 +43,7 @@ fun RightView(message: Message) {
             modifier = Modifier
                 .padding(end = 5.dp, start = 60.dp)
         ) {
-            val (head, text) = createRefs()
+            val (head, text, delete, retry) = createRefs()
             SelectionContainer(modifier = Modifier.constrainAs(text) {
                 top.linkTo(head.top)
                 end.linkTo(head.start)
@@ -59,6 +65,29 @@ fun RightView(message: Message) {
                     }
                 }
             }
+            if (isOperateVisible) {
+                IconButton(modifier = Modifier
+                    .constrainAs(delete) {
+                        top.linkTo(text.top)
+                        end.linkTo(text.start)
+                    }
+                    .width(25.dp), onClick = {
+                    onDelete.invoke()
+                }) {
+                    Icon(Icons.Filled.Clear, null)
+                }
+                IconButton(modifier = Modifier
+                    .constrainAs(retry) {
+                        top.linkTo(delete.top)
+                        end.linkTo(delete.start)
+                    }
+                    .width(25.dp), onClick = {
+                    isOperateVisible = false
+                    onRetry.invoke()
+                }) {
+                    Icon(Icons.Filled.Refresh, null)
+                }
+            }
         }
     }
 }
@@ -66,5 +95,5 @@ fun RightView(message: Message) {
 @Preview
 @Composable
 fun RightViewPreview() {
-    LeftView(Message(1, Enums.USER.roleName, "Test"))
+    LeftView(Message(1, Enums.USER.roleName, "Test")) {}
 }
