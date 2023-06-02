@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -74,22 +75,18 @@ fun SideBar(
                     indication = null,
                     interactionSource = MutableInteractionSource()
                 )
-                .padding(start = 16.dp, top = 50.dp, bottom = 16.dp, end = 16.dp)
+                .padding(start = 16.dp, top = 30.dp, bottom = 16.dp, end = 16.dp)
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                 val (cleaR) = createRefs()
-                Row() {
-                    Button(
-                        onClick = { onButtonClick.invoke() }
-                    ) {
-                        Text(text = "Создать диалог")
-                    }
-                    Button(
-                        modifier = Modifier.padding(start = 16.dp),
-                        onClick = { onScreen.invoke() }
-                    ) {
-                        Text(text = "Изображение")
-                    }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 50.dp),
+                    onClick = { isShowEditKey = true }
+                ) {
+                    Icon(Icons.Filled.Lock, null, Modifier.padding(end = 8.dp))
+                    Text(text = "OpenAI API Ключ")
                 }
                 Column(modifier = Modifier
                     .width(30.dp)
@@ -117,7 +114,6 @@ fun SideBar(
                     modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
                 )
                 Column(modifier = Modifier
-                    .width(100.dp)
                     .height(30.dp)
                     .constrainAs(cleaR) {
                         end.linkTo(parent.end)
@@ -127,12 +123,12 @@ fun SideBar(
                     Row(
                         modifier = Modifier
                             .clickable {
-                                isShowEditKey = true
+                                onButtonClick.invoke()
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.Lock, null, Modifier.padding(end = 8.dp))
-                        Text(text = "Ключ")
+                        Icon(Icons.Filled.Create, null, Modifier.padding(end = 8.dp))
+                        Text(text = "Создать диалог")
                     }
                 }
             }
@@ -185,6 +181,21 @@ fun SideBar(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
+            Text(
+                color = Color.White,
+                text = "Еще",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+            )
+            Row() {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onScreen.invoke() }
+                ) {
+                    Text(text = "Генерация изображений")
+                }
+            }
         }
         Box(modifier = Modifier
             .constrainAs(bottomR) {
@@ -200,9 +211,8 @@ fun SideBar(
                     .padding(top = 10.dp, bottom = 10.dp)
                     .clickable {
                         isAboutDialog = true
-                    },
-
-                )
+                    }
+            )
         }
     }
     if (isShowEditKey) {

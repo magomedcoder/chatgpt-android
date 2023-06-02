@@ -1,5 +1,6 @@
 package ru.magomedcoder.chatgpt.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -7,7 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import ru.magomedcoder.chatgpt.domain.model.Message
 import ru.magomedcoder.chatgpt.utils.Enums
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun LeftView(message: Message, OnDelete: () -> Unit, OnTextToSpeech: () -> Unit) {
     val content = message.content
@@ -82,7 +84,7 @@ fun LeftView(message: Message, OnDelete: () -> Unit, OnTextToSpeech: () -> Unit)
             .width(25.dp), onClick = {
             OnTextToSpeech.invoke()
         }) {
-            Icon(Icons.Filled.PlayArrow, null)
+            Icon(Icons.Filled.VolumeUp, null)
         }
     }
 }

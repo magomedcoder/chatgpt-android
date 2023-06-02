@@ -9,4 +9,5 @@ import com.google.gson.annotations.SerializedName
 data class Image(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @Expose @SerializedName("url") val url: String,
+    @Expose @SerializedName("text") val text: String = "",
 )

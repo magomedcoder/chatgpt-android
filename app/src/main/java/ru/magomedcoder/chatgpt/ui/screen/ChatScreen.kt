@@ -9,11 +9,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,10 +33,12 @@ import ru.magomedcoder.chatgpt.ui.components.KeyDialog
 import ru.magomedcoder.chatgpt.ui.components.MessageList
 import ru.magomedcoder.chatgpt.ui.components.SideBar
 import ru.magomedcoder.chatgpt.ui.theme.Purple40
+import ru.magomedcoder.chatgpt.utils.VoiceToTextParser
+import java.util.*
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel) {
+fun ChatScreen(viewModel: ChatViewModel, voiceToText: VoiceToTextParser) {
     val ctx = LocalContext.current
     val dialogs by viewModel.dialogList.observeAsState(emptyList())
     val list by viewModel.list.observeAsState(emptyList())
@@ -50,7 +52,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
     var isVisible by remember { mutableStateOf(false) }
     var isScreen by remember { mutableStateOf(false) }
     var isShowEditKey by remember { mutableStateOf(false) }
-    var clickToShowPermission by rememberSaveable { mutableStateOf(false) }
+    val voiceToTextParserState by voiceToText.state.collectAsState()
     if (Constants.GlobalConfig.apiKey.isEmpty()) {
         isShowEditKey = true
     }
@@ -104,8 +106,16 @@ fun ChatScreen(viewModel: ChatViewModel) {
                         text = TextFieldValue("")
                     },
                     onRecordingClick = {
-                        clickToShowPermission = true
-                    }
+                        if (!voiceToTextParserState.isSpeaking) {
+                            voiceToText.startListening("ru")
+                        } else {
+                            voiceToText.stopListening()
+                            if(voiceToTextParserState.spokenText.isNotEmpty()){
+                                viewModel.sendMessage(text.text)
+                            }
+                        }
+                    },
+                    voiceToTextParserState = voiceToTextParserState
                 )
             }
         }
@@ -157,5 +167,5 @@ fun ChatScreen(viewModel: ChatViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    ChatScreen(get())
+    ChatScreen(get(), get())
 }

@@ -5,7 +5,6 @@ import ru.magomedcoder.chatgpt.utils.persistence.Preference
 
 object Constants {
     const val BASE_URL = "https://api.openai.com/"
-    const val LOGGER_TAG = "chatgpt_log"
     const val DATABASE_NAME = "chatgpt_db"
     const val PREFERENCE_NAME = "chatgpt"
     const val API_KEY = "api_key"

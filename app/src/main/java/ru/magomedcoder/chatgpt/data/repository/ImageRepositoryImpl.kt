@@ -40,7 +40,7 @@ class ImageRepositoryImpl(
 
     suspend fun fetchImage(text: String): Result<ImageResponse> {
         return handleRemoteException {
-            val imageRequest = ImageRequest(1, text, "256x256")
+            val imageRequest = ImageRequest(1, text, "512x512")
             val response =
                 _imageApi.generations("Bearer ${Constants.GlobalConfig.apiKey}", imageRequest)
             response
